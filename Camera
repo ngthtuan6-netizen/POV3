@@ -1,0 +1,16 @@
+local P,C,UIS=game.Players.LocalPlayer,workspace.CurrentCamera,game:GetService("UserInputService")
+local b=Instance.new("TextButton",Instance.new("ScreenGui",P.PlayerGui))
+b.Size,b.Position=UDim2.new(0,60,0,60),UDim2.new(0.02,0,0.8,0)
+b.Text,b.BackgroundColor3="3RD",Color3.fromRGB(60,60,70)
+Instance.new("UICorner",b).CornerRadius=UDim.new(0.2,0)
+
+local t,o,d,s=false,Vector3.new(0,0,-8) -- THÊM BIẾN 's'
+b.MouseButton1Click:Connect(function()t=not t b.Text=t and "1ST"or"3RD"b.BackgroundColor3=t and Color3.fromRGB(70,170,70)or Color3.fromRGB(170,70,70)if not t then C.CameraType=Enum.CameraType.Custom end end)
+
+game:GetService("RunService").RenderStepped:Connect(function()if t and P.Character then local r=P.Character:FindFirstChild("HumanoidRootPart")if r then C.CFrame=CFrame.new(r.Position+o,r.Position)C.CameraType=Enum.CameraType.Scriptable end end end)
+
+-- SỬA LỖI ZOOM: THÊM BIẾN LƯU GIÁ TRỊ BAN ĐẦU
+local startZoom
+UIS.TouchStarted:Connect(function(i)if t then d=i.Position startZoom=o.Z end end)
+UIS.TouchMoved:Connect(function(i)if t and d then o=Vector3.new(0,0,math.clamp(startZoom+(i.Position-d).Y*0.1,-15,-3)) end end)
+P.CharacterAdded:Connect(function(c)c:WaitForChild("Humanoid").Died:Connect(function()t=false b.Text="3RD"b.BackgroundColor3=Color3.fromRGB(170,70,70)C.CameraType=Enum.CameraType.Custom end)end)
